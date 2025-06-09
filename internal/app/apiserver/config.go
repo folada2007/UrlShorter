@@ -7,7 +7,7 @@ type DBConfig struct {
 	Port     string `toml:"port"`
 	User     string `toml:"user"`
 	Password string `toml:"password"`
-	Database string `toml:"database"`
+	Database string `toml:"dbname"`
 	SSLMode  string `toml:"sslmode"`
 }
 

@@ -7,10 +7,14 @@ import (
 	"ShorterAPI/pkg/dto"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
 )
+
+const shortUrlPrefix = "http://localhost:8080/"
 
 type Handler struct {
 	Logger *logrus.Logger
@@ -52,6 +56,29 @@ func (h *Handler) HomeHandler() http.HandlerFunc {
 			respondWithError(w, http.StatusInternalServerError, "Internal Server Error", "internal server error")
 			return
 		}
+		err = json.NewEncoder(w).Encode(fmt.Sprintf("Success! Your short link: %s", shortUrlPrefix+valueObj.ShortUrl))
+	}
+}
+
+func (h *Handler) RedirectHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var vars = mux.Vars(r)
+		shortKey := vars["shortKey"]
+
+		longUrl, err := h.Repo.FindLongUrlByKey(shortKey)
+		if errors.Is(err, shorter.ErrNotFound) {
+			h.Logger.WithError(err).Error("Not found")
+			respondWithError(w, http.StatusNotFound, "Not Found", "short link not found")
+			return
+		}
+
+		if err != nil {
+			h.Logger.WithError(err).Error("Error finding longUrl by key")
+			respondWithError(w, http.StatusInternalServerError, "Internal Server Error", "internal server error")
+			return
+		}
+
+		http.Redirect(w, r, longUrl, http.StatusFound)
 	}
 }
 

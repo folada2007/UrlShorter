@@ -30,6 +30,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println("Connected to database" + config.Db.GetConnectionString())
 
 	s := apiserver.New(config, pool)
 

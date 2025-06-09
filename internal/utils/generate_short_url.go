@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-const shortURLLength = 8
+const shortURLMaxLength = 8
+const shortURLMinLength = 4
 const shortUrlItem = "1234567890abcdefghiklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ"
 
 var (
@@ -13,11 +14,11 @@ var (
 )
 
 func GenerateShortUrl() string {
-	shortUrl := make([]byte, shortURLLength)
+	shortUrl := make([]byte, rnd.Intn(shortURLMaxLength-shortURLMinLength+1)+shortURLMinLength)
 
-	for v := range shortUrl {
+	for i := range shortUrl {
 		index := rnd.Intn(len(shortUrlItem))
-		shortUrl[v] = shortUrlItem[index]
+		shortUrl[i] = shortUrlItem[index]
 	}
 	return string(shortUrl)
 }

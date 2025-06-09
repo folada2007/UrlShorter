@@ -51,4 +51,5 @@ func (s *APIServer) configureRouter() {
 
 	h := handler.NewHandler(s.logger, s.repo)
 	s.router.HandleFunc("/", h.HomeHandler()).Methods("POST")
+	s.router.HandleFunc("/{shortKey}", h.RedirectHandler()).Methods("GET")
 }
